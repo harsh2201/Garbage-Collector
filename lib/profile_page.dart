@@ -374,11 +374,11 @@ class _ProfilePage extends State<ProfilePage>
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceEvenly,
                                     children: <Widget>[
-                                      buildStatColumn("posts", postCount),
-                                      buildStatColumn("followers",
-                                          _countFollowings(user.followers)),
-                                      buildStatColumn("following",
-                                          _countFollowings(user.following)),
+                                      // buildStatColumn("posts", postCount),
+                                      // buildStatColumn("followers",
+                                      // _countFollowings(user.followers)),
+                                      // buildStatColumn("following",
+                                      // _countFollowings(user.following)),
                                     ],
                                   ),
                                   Row(

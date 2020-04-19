@@ -59,9 +59,17 @@ class LoginScreen extends StatelessWidget {
   }
 
   Future<String> _loginUser(LoginData data) async {
-    await auth.signInWithEmailAndPassword(
-        email: data.name, password: data.password);
-    tryCreateUserRecord(data.uname);
+    // tryCreateUserRecord(data.uname);
+
+    try {
+      await auth.signInWithEmailAndPassword(
+          email: data.name, password: data.password);
+      await tryCreateUserRecord(data.uname);
+      return null;
+    } catch (error) {
+      print(error);
+      return error.message;
+    }
     // await tryCreateUserRecord(data.uname);
     // return Future.delayed(loginTime).then((_) {
     //   if (!mockUsers.containsKey(data.name)) {
@@ -76,9 +84,18 @@ class LoginScreen extends StatelessWidget {
   }
 
   Future<String> _signUpUser(LoginData data) async {
-    await auth.createUserWithEmailAndPassword(
-        email: data.name, password: data.password);
-    await tryCreateUserRecord(data.uname);
+    // await auth.createUserWithEmailAndPassword(
+    //     email: data.name, password: data.password);
+
+    try {
+      await auth.createUserWithEmailAndPassword(
+          email: data.name, password: data.password);
+      await tryCreateUserRecord(data.uname);
+      return null;
+    } catch (error) {
+      print(error);
+      return error.message;
+    }
     // return Future.delayed(loginTime).then((_) {
     //   if (!mockUsers.containsKey(data.name)) {
     //     return 'Username not exists';
@@ -225,12 +242,11 @@ class LoginScreen extends StatelessWidget {
       },
       onSubmitAnimationCompleted: () {
         Navigator.of(context).pop();
-        Navigator.of(context)
-            .pushReplacement(FadePageRoute(
-              builder: (context) => DashboardScreen(),
-            ))
+        Navigator.of(context).pushReplacement(FadePageRoute(
+          builder: (context) => DashboardScreen(),
+        ))
             // .then((_) => false);
-        ;
+            ;
       },
       onRecoverPassword: (name) {
         print('Recover password info');

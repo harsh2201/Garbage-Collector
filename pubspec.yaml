@@ -25,7 +25,6 @@ dependencies:
   flushbar: 1.9.1
   # flutter_test from sdk depends on quiver 2.0.5
   quiver: ^2.0.5
-  flutter_launcher_icons: ^0.7.4
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -34,15 +33,15 @@ dependencies:
   # dummy package to test https://github.com/NearHuscarl/flutter_login/issues/35
   provider: ^4.0.1
 
-flutter_icons:
-  android: "launcher_icon"
-  ios: true
-  image_path: "assets/images/garbage.jpg"
-
-#dev_dependencies:
+# dev_dependencies:
 #  flutter_test:
-#    sdk: flutter
+#   sdk: flutter
+# flutter_launcher_icons: ^0.7.4
 
+# flutter_icons:
+#   android: true
+#   ios: true
+#   image_path: "./assets/images/gar.jpg"
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
 
@@ -128,8 +127,8 @@ flutter:
           weight: 700
   assets:
     - assets/
-    - assets/images/google_signin_button.png
-    - assets/flare/Like.flr
+    # - assets/images/google_signin_button.png
+    # - assets/flare/Like.flr
   # To add assets to your application, add an assets section, like this:
   # assets:
   #  - images/a_dot_burr.jpeg

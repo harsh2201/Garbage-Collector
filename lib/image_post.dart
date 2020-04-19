@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -7,12 +8,14 @@ import 'profile_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'comment_screen.dart';
 import 'package:flare_flutter/flare_actor.dart';
+import 'feed.dart';
 
 class ImagePost extends StatefulWidget {
   const ImagePost(
       {this.mediaUrl,
       this.username,
-      // this.location,
+      this.weight,
+      this.type,
       this.description,
       this.likes,
       this.postId,
@@ -25,6 +28,8 @@ class ImagePost extends StatefulWidget {
       mediaUrl: document['mediaUrl'],
       likes: document['likes'],
       description: document['description'],
+      type: document["type"],
+      weight: document["weight"],
       postId: document.documentID,
       ownerId: document['ownerId'],
     );
@@ -37,6 +42,8 @@ class ImagePost extends StatefulWidget {
       mediaUrl: data['mediaUrl'],
       likes: data['likes'],
       description: data['description'],
+      weight: data['weight'],
+      type: data['type'],
       ownerId: data['ownerId'],
       postId: data['postId'],
     );
@@ -60,7 +67,8 @@ class ImagePost extends StatefulWidget {
 
   final String mediaUrl;
   final String username;
-  // final String location;
+  final String weight;
+  final String type;
   final String description;
   final likes;
   final String postId;
@@ -69,12 +77,14 @@ class ImagePost extends StatefulWidget {
   _ImagePost createState() => _ImagePost(
         mediaUrl: this.mediaUrl,
         username: this.username,
-        // location: this.location,
+        weight: this.weight,
+        type: this.type,
         description: this.description,
         likes: this.likes,
         likeCount: getLikeCount(this.likes),
         ownerId: this.ownerId,
         postId: this.postId,
+        
       );
 }
 
@@ -83,6 +93,8 @@ class _ImagePost extends State<ImagePost> {
   final String username;
   // final String location;
   final String description;
+  final String type;
+  final String weight;
   Map likes;
   int likeCount;
   final String postId;
@@ -104,6 +116,8 @@ class _ImagePost extends State<ImagePost> {
       this.username,
       // this.location,
       this.description,
+      this.weight,
+      this.type,
       this.likes,
       this.postId,
       this.likeCount,
@@ -162,6 +176,15 @@ class _ImagePost extends State<ImagePost> {
     );
   }
 
+  deletePost(String postId) async {
+    print(postId);
+    
+    await Firestore.instance
+        .collection('insta_posts')
+        .document(postId)
+        .delete();
+  }
+
   buildPostHeader({String ownerId}) {
     if (ownerId == null) {
       return Text("owner error");
@@ -188,7 +211,13 @@ class _ImagePost extends State<ImagePost> {
                 },
               ),
               // subtitle: Text(this.location),
-              trailing: const Icon(Icons.more_vert),
+              // trailing: GestureDetector(
+              //   // child: Icon(Icons.delete_outline),
+              //   child: Text(snapshot.data.data['username'].toString()),
+              //   onTap: () {
+              //     deletePost(snapshot.data.data['postId'].toString());
+              //   },
+              // ),
             );
           }
 
@@ -229,6 +258,16 @@ class _ImagePost extends State<ImagePost> {
                       ownerId: ownerId,
                       mediaUrl: mediaUrl);
                 }),
+            Padding(padding: const EdgeInsets.only(right: 20.0)),
+            GestureDetector(
+                child: const Icon(
+                  FontAwesomeIcons.trashAlt,
+                  size: 25.0,
+                ),
+                onTap: () {
+                  deletePost(postId);
+                }),
+               
           ],
         ),
         Row(
@@ -251,7 +290,13 @@ class _ImagePost extends State<ImagePost> {
                   "$username ",
                   style: boldStyle,
                 )),
-            Expanded(child: Text(description)),
+            Expanded(
+                child: Text("Description: " +
+                    description +
+                    " Type: " +
+                    type +
+                    " Weight: " +
+                    weight)),
           ],
         )
       ],

@@ -19,6 +19,8 @@ class _Uploader extends State<Uploader> {
 
   // Map<String, double> currentLocation = Map();
   TextEditingController descriptionController = TextEditingController();
+  TextEditingController weightController = TextEditingController();
+  TextEditingController typeController = TextEditingController();
   // TextEditingController locationController = TextEditingController();
 
   bool uploading = false;
@@ -73,6 +75,8 @@ class _Uploader extends State<Uploader> {
                 PostForm(
                   imageFile: file,
                   descriptionController: descriptionController,
+                  weightcontroller: weightController,
+                  typeController: typeController,
                   // locationController: locationController,
                   loading: uploading,
                 ),
@@ -187,7 +191,7 @@ class _Uploader extends State<Uploader> {
       uploading = true;
     });
     uploadImage(file).then((String data) {
-      postToFireStore(mediaUrl: data, description: descriptionController.text);
+      postToFireStore(mediaUrl: data, description: descriptionController.text, type: typeController.text, weight: weightController.text);
       // location: locationController.text);
     }).then((_) {
       setState(() {
@@ -201,13 +205,15 @@ class _Uploader extends State<Uploader> {
 class PostForm extends StatelessWidget {
   final imageFile;
   final TextEditingController descriptionController;
-  final TextEditingController locationController;
+  final TextEditingController typeController;
+  final TextEditingController weightcontroller;
   final bool loading;
   PostForm(
       {this.imageFile,
       this.descriptionController,
       this.loading,
-      this.locationController});
+      this.typeController, 
+      this.weightcontroller});
 
   Widget build(BuildContext context) {
     return Column(
@@ -250,13 +256,25 @@ class PostForm extends StatelessWidget {
         ),
         Divider(),
         ListTile(
-          leading: Icon(Icons.pin_drop),
+          leading: Icon(Icons.category),
           title: Container(
             width: 250.0,
             child: TextField(
-              controller: locationController,
+              controller: typeController,
               decoration: InputDecoration(
-                  hintText: "Where was this photo taken?",
+                  hintText: "Enter the category of garbage",
+                  border: InputBorder.none),
+            ),
+          ),
+        ),
+        ListTile(
+          leading: Icon(Icons.border_color),
+          title: Container(
+            width: 250.0,
+            child: TextField(
+              controller: weightcontroller,
+              decoration: InputDecoration(
+                  hintText: "Enter weight",
                   border: InputBorder.none),
             ),
           ),
@@ -276,7 +294,7 @@ Future<String> uploadImage(var imageFile) async {
 }
 
 void postToFireStore(
-    {String mediaUrl, String location, String description}) async {
+    {String mediaUrl, String location, String description, String type, String weight}) async {
   var reference = Firestore.instance.collection('insta_posts');
 
   reference.add({
@@ -285,6 +303,8 @@ void postToFireStore(
     "likes": {},
     "mediaUrl": mediaUrl,
     "description": description,
+    "weight": weight,
+    "type": type,
     "ownerId": currentUserModel.id,
     "timestamp": DateTime.now(),
   }).then((DocumentReference doc) {

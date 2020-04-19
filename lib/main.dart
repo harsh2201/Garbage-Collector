@@ -194,7 +194,7 @@ class GarbageCollector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Garbage Collector App',
+      title: 'Waste Product Management',
       theme: ThemeData(
           // This is the theme of your application.
           //
@@ -279,7 +279,7 @@ class _HomePageState extends State<HomePage> {
     //       child: Column(
     //         children: <Widget>[
     //           Text(
-    //             'Garbage Collector app',
+    //             'Waste Product Management',
     //             style: TextStyle(
     //                 fontSize: 60.0,
     //                 fontFamily: "Billabong",
