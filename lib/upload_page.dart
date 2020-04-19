@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,6 +21,8 @@ class _Uploader extends State<Uploader> {
   // Map<String, double> currentLocation = Map();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController weightController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController locationController = TextEditingController();
   TextEditingController typeController = TextEditingController();
   // TextEditingController locationController = TextEditingController();
 
@@ -77,7 +80,8 @@ class _Uploader extends State<Uploader> {
                   descriptionController: descriptionController,
                   weightcontroller: weightController,
                   typeController: typeController,
-                  // locationController: locationController,
+                  locationController: locationController,
+                  phoneController: phoneController,
                   loading: uploading,
                 ),
                 Divider(), //scroll view where we will show location to users
@@ -191,7 +195,13 @@ class _Uploader extends State<Uploader> {
       uploading = true;
     });
     uploadImage(file).then((String data) {
-      postToFireStore(mediaUrl: data, description: descriptionController.text, type: typeController.text, weight: weightController.text);
+      postToFireStore(
+          mediaUrl: data,
+          description: descriptionController.text,
+          type: typeController.text,
+          weight: weightController.text,
+          phone: phoneController.text,
+          location: locationController.text);
       // location: locationController.text);
     }).then((_) {
       setState(() {
@@ -206,14 +216,18 @@ class PostForm extends StatelessWidget {
   final imageFile;
   final TextEditingController descriptionController;
   final TextEditingController typeController;
-  final TextEditingController weightcontroller;
+  final TextEditingController weightcontroller,
+      locationController,
+      phoneController;
   final bool loading;
   PostForm(
       {this.imageFile,
       this.descriptionController,
       this.loading,
-      this.typeController, 
-      this.weightcontroller});
+      this.typeController,
+      this.weightcontroller,
+      this.locationController,
+      this.phoneController});
 
   Widget build(BuildContext context) {
     return Column(
@@ -268,14 +282,35 @@ class PostForm extends StatelessWidget {
           ),
         ),
         ListTile(
-          leading: Icon(Icons.border_color),
+          leading: Icon(FontAwesomeIcons.weight),
           title: Container(
             width: 250.0,
             child: TextField(
               controller: weightcontroller,
               decoration: InputDecoration(
-                  hintText: "Enter weight",
-                  border: InputBorder.none),
+                  hintText: "Enter weight", border: InputBorder.none),
+            ),
+          ),
+        ),
+        ListTile(
+          leading: Icon(FontAwesomeIcons.locationArrow),
+          title: Container(
+            width: 250.0,
+            child: TextField(
+              controller: locationController,
+              decoration: InputDecoration(
+                  hintText: "Enter location", border: InputBorder.none),
+            ),
+          ),
+        ),
+        ListTile(
+          leading: Icon(Icons.phone),
+          title: Container(
+            width: 250.0,
+            child: TextField(
+              controller: phoneController,
+              decoration: InputDecoration(
+                  hintText: "Enter phone no.", border: InputBorder.none),
             ),
           ),
         )
@@ -294,7 +329,12 @@ Future<String> uploadImage(var imageFile) async {
 }
 
 void postToFireStore(
-    {String mediaUrl, String location, String description, String type, String weight}) async {
+    {String mediaUrl,
+    String location,
+    String description,
+    String type,
+    String weight,
+    String phone}) async {
   var reference = Firestore.instance.collection('insta_posts');
 
   reference.add({
@@ -304,6 +344,8 @@ void postToFireStore(
     "mediaUrl": mediaUrl,
     "description": description,
     "weight": weight,
+    "location": location,
+    "phone": phone,
     "type": type,
     "ownerId": currentUserModel.id,
     "timestamp": DateTime.now(),

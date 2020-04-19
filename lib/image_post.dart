@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'main.dart';
 import 'dart:async';
 import 'profile_page.dart';
@@ -15,6 +16,8 @@ class ImagePost extends StatefulWidget {
       {this.mediaUrl,
       this.username,
       this.weight,
+      this.phone,
+      this.location,
       this.type,
       this.description,
       this.likes,
@@ -30,6 +33,8 @@ class ImagePost extends StatefulWidget {
       description: document['description'],
       type: document["type"],
       weight: document["weight"],
+      phone: document["phone"],
+      location: document["location"],
       postId: document.documentID,
       ownerId: document['ownerId'],
     );
@@ -43,6 +48,8 @@ class ImagePost extends StatefulWidget {
       likes: data['likes'],
       description: data['description'],
       weight: data['weight'],
+      phone: data['phone'],
+      location: data['location'],
       type: data['type'],
       ownerId: data['ownerId'],
       postId: data['postId'],
@@ -67,7 +74,7 @@ class ImagePost extends StatefulWidget {
 
   final String mediaUrl;
   final String username;
-  final String weight;
+  final String weight, location, phone;
   final String type;
   final String description;
   final likes;
@@ -78,13 +85,14 @@ class ImagePost extends StatefulWidget {
         mediaUrl: this.mediaUrl,
         username: this.username,
         weight: this.weight,
+        phone: this.phone,
+        location: this.location,
         type: this.type,
         description: this.description,
         likes: this.likes,
         likeCount: getLikeCount(this.likes),
         ownerId: this.ownerId,
         postId: this.postId,
-        
       );
 }
 
@@ -94,7 +102,7 @@ class _ImagePost extends State<ImagePost> {
   // final String location;
   final String description;
   final String type;
-  final String weight;
+  final String weight, phone, location;
   Map likes;
   int likeCount;
   final String postId;
@@ -117,6 +125,8 @@ class _ImagePost extends State<ImagePost> {
       // this.location,
       this.description,
       this.weight,
+      this.phone,
+      this.location,
       this.type,
       this.likes,
       this.postId,
@@ -178,14 +188,14 @@ class _ImagePost extends State<ImagePost> {
 
   deletePost(String postId) async {
     print(postId);
-    
+
     await Firestore.instance
         .collection('insta_posts')
         .document(postId)
         .delete();
   }
 
-  buildPostHeader({String ownerId}) {
+  buildPostHeader({String ownerId, String location}) {
     if (ownerId == null) {
       return Text("owner error");
     }
@@ -210,7 +220,7 @@ class _ImagePost extends State<ImagePost> {
                   openProfile(context, ownerId);
                 },
               ),
-              // subtitle: Text(this.location),
+              subtitle: Text(this.location),
               // trailing: GestureDetector(
               //   // child: Icon(Icons.delete_outline),
               //   child: Text(snapshot.data.data['username'].toString()),
@@ -238,7 +248,7 @@ class _ImagePost extends State<ImagePost> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        buildPostHeader(ownerId: ownerId),
+        buildPostHeader(ownerId: ownerId, location: location),
         buildLikeableImage(),
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -267,7 +277,15 @@ class _ImagePost extends State<ImagePost> {
                 onTap: () {
                   deletePost(postId);
                 }),
-               
+            Padding(padding: const EdgeInsets.only(right: 20.0)),
+            GestureDetector(
+                child: const Icon(
+                  FontAwesomeIcons.phoneAlt,
+                  size: 25.0,
+                ),
+                onTap: () {
+                  launch("tel://" + phone);
+                }),
           ],
         ),
         Row(
